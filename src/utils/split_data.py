@@ -1,8 +1,12 @@
 from sklearn.model_selection import train_test_split
 import numpy as np
 
-def split_data(X, y):
-   return train_test_split(X,y)
+def split_data(X, y, test_size=0.3, random_state=42, shuffle=False):
+   return train_test_split(X,
+                           y, 
+                           test_size=test_size, 
+                           random_state=random_state,
+                           shuffle=shuffle)
 
 if __name__ == "__main__":
     arr = np.random.randn(100,10)
