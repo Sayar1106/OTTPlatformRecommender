@@ -4,33 +4,35 @@ import joblib
 import pandas as pd 
 import os
 from sklearn import metrics
-from utils import split_data
+from utils.split_data import split_data
 from utils.scaler import Scaler
 import config
 
 # TODO(Sayar) This is currently boilerplate. Have to discuss with Leo how to read the data into the model.
 @click.command()
-@click.option("--fold", type=int, help="Enter the fold")
-@click.opton("--model", type=str, help="Enter the model")
-def run(fold):
+@click.option("--model", type=str, help="Enter the model")
+@click.option("--neighbors", type=int, help="Number of neighbors")
+def run(model, neighbors):
     file = None
     SEED = None
-    df = pd.read_csv(file)
+    df = pd.read_csv(config.MODEL_INPUT, usecols=["acousticness", "danceability", 
+                                    "energy", "instrumentalness", 
+                                    "liveness", "loudness", "speechiness", 
+                                    "tempo", "valence", "popularity"])
 
-    X_train = df[df["kfold"] != fold].reset_index(drop=True).values
+    X_train, X_valid, _, _ = split_data(df.values, df.values[:,-1])
     scaler = Scaler()
     scaler.fit(X_train)
 
     X_train = scaler.transform(X_train)
 
-    X_valid = df[df["kfold"] == fold].reset_index(drop=True).values
     X_valid = scaler.transform(X_valid)
 
-    model = model_dispatcher.models[model]
+    model = model_dispatcher.models[model](n_neighbors=neighbors)
 
-    model.fit(X_train)
+    model.fit(X=X_train)
 
-    joblib.dump(model, os.path.join(config.MODEL_OUTPUT, f"knn_{fold}.bin"))
+    joblib.dump(model, os.path.join(config.MODEL_OUTPUT, f"knn_.bin"))
 
 
 if __name__ == "__main__":
