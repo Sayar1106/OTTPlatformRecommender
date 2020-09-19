@@ -5,7 +5,6 @@ import pandas as pd
 import os
 from sklearn import metrics
 from utils.split_data import split_data
-from utils.scaler import Scaler
 import config
 
 # TODO(Sayar) This is currently boilerplate. Have to discuss with Leo how to read the data into the model.
@@ -15,20 +14,19 @@ import config
 def run(model, neighbors):
     file = None
     SEED = None
-    df = pd.read_csv(config.MODEL_INPUT, usecols=["acousticness", "danceability", 
+    df = pd.read_csv(config.MODEL_INPUT, usecols=["artists", "acousticness", "danceability", 
                                     "energy", "instrumentalness", 
                                     "liveness", "loudness", "speechiness", 
                                     "tempo", "valence", "popularity"])
 
-    X_train, X_valid, _, _ = split_data(df.values, df.values[:,-1])
-    scaler = Scaler()
-    scaler.fit(X_train)
+    X_train, X_valid, _, _ = split_data(df, df.iloc[:,-1])
 
-    X_train = scaler.transform(X_train)
+    X_train.to_csv("data/train_lookup.csv")
+    X_valid.to_csv("data/valid_lookup.csv")
 
-    X_valid = scaler.transform(X_valid)
+    X_train = X_train.iloc[:, 1:].values
 
-    model = model_dispatcher.models[model](n_neighbors=neighbors)
+    model = model_dispatcher.models[model](n_neighbors=neighbors, algorithm='ball_tree')
 
     model.fit(X=X_train)
 
