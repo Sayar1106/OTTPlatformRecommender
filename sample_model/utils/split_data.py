@@ -1,7 +1,7 @@
 from sklearn.model_selection import train_test_split
 import numpy as np
 
-def split_data(X, y, test_size=0.3, random_state=42, shuffle=False):
+def split_data(X, y, test_size=0.1, random_state=42, shuffle=True):
    return train_test_split(X,
                            y, 
                            test_size=test_size, 
