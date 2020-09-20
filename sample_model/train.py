@@ -7,7 +7,7 @@ from sklearn import metrics
 from utils.split_data import split_data
 import config
 
-# TODO(Sayar) This is currently boilerplate. Have to discuss with Leo how to read the data into the model.
+
 @click.command()
 @click.option("--model", type=str, help="Enter the model")
 @click.option("--neighbors", type=int, help="Number of neighbors")
